@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta - Liga de Baloncesto</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="js/main.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Compra de Entradas</h1>
+        <img src="img/interclubes.png" alt="Descripción de la imagen" style="display: block; margin: 10px auto 20px;">
+
+        <form id="ticketForm">
+            <label for="ticketCount">Número de Entradas:</label>
+            <input type="number" id="ticketCount" name="ticketCount" min="1" value="1">
+            
+            <label for="totalCost">Costo Total:</label>
+            <input type="text" id="totalCost" name="totalCost" readonly>
+            
+            <button type="button" onclick="processSale()">Procesar</button>
+        </form>
+
+        <div id="receipt" style="display:none; margin-top: 20px;">
+            <h2>Comprobante de Pago</h2>
+            <p id="date"></p>
+            <p id="quantity"></p>
+            <p id="total"></p>
+            <p id="code"></p>
+            <button type="button" onclick="confirmSale()">Confirmar Venta</button> <!-- Botón Confirmar Venta -->
+            <button type="button" onclick="window.printReceipt()">Imprimir</button>
+            <button type="button" onclick="cancelReceipt()">Cancelar</button>
+        </div>
+    </div>
+</body>
+</html>
+
+

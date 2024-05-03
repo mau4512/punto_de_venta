@@ -1,0 +1,36 @@
+CREATE DATABASE `tickets` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+SELECT * FROM ventas;
+SHOW TABLES LIKE 'ventas';
+
+CREATE TABLE IF NOT EXISTS ventas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE,
+    cantidad INT,
+    total DECIMAL(10, 2),
+    codigo_unico VARCHAR(255)
+);
+
+CREATE TABLE vendedores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    sede VARCHAR(255) NOT NULL
+);
+
+DROP TABLE vendedores;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    firstName VARCHAR(255) NOT NULL,
+    lastName VARCHAR(255) NOT NULL,
+    dni VARCHAR(255) NOT NULL UNIQUE
+);
+
+SELECT * FROM users;
+
+ALTER TABLE ventas ADD COLUMN sede VARCHAR(255);
+
+

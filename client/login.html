@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Liga de Baloncesto</title>
+    <link rel="stylesheet" href="/css/style-login.css"> <!-- Asegúrate de que el CSS esté bien enlazado -->
+</head>
+<body>
+    <div class="login-container">
+        <img src="/img/interclubes.png" alt="Logo de la Liga de Baloncesto" class="logo"> <!-- Asegúrate de que la ruta al logo sea correcta -->
+        <form id="loginForm" class="login-form">
+            <label for="username">Nombre de usuario:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Iniciar Sesión</button>
+            <p>No tienes cuenta? <a href="/register">Crear una cuenta</a></p> <!-- Enlace para crear cuenta -->
+        </form>
+    </div>
+    <script src="/js/login.js"></script>
+</body>
+</html>
+
