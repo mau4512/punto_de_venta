@@ -98,8 +98,8 @@ function printReceipt() {
         </body>
         </html>
     `);
-    receiptWindow.document.close(); // Finish writing
-    receiptWindow.print(); // Trigger the print dialog
+    receiptWindow.document.close(); 
+    receiptWindow.print(); 
     receiptWindow.onfocus = function () { setTimeout(function () { receiptWindow.close(); }, 1000); }
 }
 

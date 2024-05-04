@@ -19,7 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     .then(data => {
         console.log('Login exitoso:', data);
         // Redireccionar a la página de ventas (home.html)
-        window.location.href = '/sede';  // Asegúrate de que este es el camino correcto para tu página de ventas
+        window.location.href = '/sede';  
     })
     .catch(error => {
         console.error('Error:', error);

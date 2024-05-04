@@ -51,15 +51,11 @@ router.post('/setSede', (req, res) => {
 
 
 function generateNewCodeForSale(sede, date, lastCode) {
-    // Incrementa el último código o inicia en 01 si no hay ventas previas
     const newCodeNumber = lastCode ? parseInt(lastCode.split('-')[1]) + 1 : 1;
-    // Formatea el número del código para que siempre tenga dos dígitos
     const formattedCodeNumber = newCodeNumber.toString().padStart(2, '0');
-    // Construye el código único con la sede, fecha y número de venta
     return `${sede}${date.replace(/-/g, '').slice(4)}-${formattedCodeNumber}`;
 }
 
-// Luego, en tu ruta donde registras la venta:
 // Ruta para registrar ventas
 router.post('/registerSale', (req, res) => {
     console.log('Sede recibida en el backend:', req.body.sede);
