@@ -103,3 +103,65 @@ function printReceipt() {
     receiptWindow.onfocus = function () { setTimeout(function () { receiptWindow.close(); }, 1000); }
 }
 
+function generateDailyReport() {
+    const today = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
+    fetch('/api/generateDailyReport?date=' + today)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            printDailyReport(data.report);
+        } else {
+            alert('Error al generar el reporte diario');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error de conexión al generar el reporte');
+    });
+}
+
+function printDailyReport(reportData) {
+    let receiptWindow = window.open('', '_blank', 'width=200,height=600');
+    receiptWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <title>Reporte Diario de Ventas</title>
+            <style>
+                body {
+                    width: 58mm;
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 10px;
+                    text-align: center;
+                }
+                .report-header {
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+                .report-section {
+                    margin-top: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="report-header">Reporte Diario de Ventas</div>
+            <div>Fecha: ${reportData.date}</div>
+            ${reportData.sections.map(section => `
+                <div class="report-section">
+                    Sede: ${section.sede}
+                    Total Entradas: ${section.total_tickets}
+                    Total Ingresos: S./${section.total_income.toFixed(2)}
+                </div>
+            `).join('')}
+        </body>
+        </html>
+    `);
+    receiptWindow.document.close();
+    receiptWindow.print();
+    receiptWindow.onfocus = function () { setTimeout(function () { receiptWindow.close(); }, 1000); }
+}
+
+
+

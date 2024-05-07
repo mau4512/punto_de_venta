@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../config/database');
 const bcrypt = require('bcryptjs');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
 // Ruta para registrar usuarios
 router.post('/register', async (req, res) => {
@@ -93,6 +95,28 @@ router.post('/registerSale', (req, res) => {
     );
 });
 
+//generar el reporte diario de ventas
+router.get('/generateDailyReport', (req, res) => {
+    const { date } = req.query;
+
+    connection.query(
+        'SELECT sede, COUNT(*) as total_tickets, SUM(total) as total_income FROM ventas WHERE DATE(fecha) = ? GROUP BY sede',
+        [date],
+        (err, results) => {
+            if (err) {
+                console.error('Error al obtener datos de ventas:', err);
+                return res.status(500).json({ success: false, message: 'Error al generar el reporte.' });
+            }
+
+            const reportData = {
+                date: date,
+                sections: results
+            };
+
+            res.json({ success: true, report: reportData });
+        }
+    );
+});
 
 
 
