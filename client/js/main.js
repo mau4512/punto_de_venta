@@ -106,7 +106,12 @@ function printReceipt() {
 function generateDailyReport() {
     const today = new Date().toISOString().slice(0, 10); // Formato YYYY-MM-DD
     fetch('/api/generateDailyReport?date=' + today)
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al generar el reporte diario: ' + response.statusText);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             printDailyReport(data.report);
@@ -120,48 +125,57 @@ function generateDailyReport() {
     });
 }
 
-function printDailyReport(reportData) {
-    let receiptWindow = window.open('', '_blank', 'width=200,height=600');
-    receiptWindow.document.write(`
+function printDailyReport(report) {
+    var receiptWindow = window.open('', '_blank', 'width=200,height=600');
+
+    if (!receiptWindow) {
+        alert("La ventana emergente fue bloqueada. Por favor, permita las ventanas emergentes para esta aplicación.");
+        return;
+    }
+
+    var content = `
         <!DOCTYPE html>
         <html lang="es">
         <head>
             <meta charset="UTF-8">
-            <title>Reporte Diario de Ventas</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Reporte Diario</title>
             <style>
                 body {
-                    width: 58mm;
-                    font-family: 'Courier New', Courier, monospace;
-                    font-size: 10px;
-                    text-align: center;
-                }
-                .report-header {
+                    width: 7.5cm;
+                    font-family: 'Arial', sans-serif;
                     font-size: 12px;
-                    font-weight: bold;
-                    margin-bottom: 5px;
-                }
-                .report-section {
-                    margin-top: 10px;
+                    line-height: 1.5;
+                    text-align: center;
+                    padding: 5mm;
                 }
             </style>
         </head>
         <body>
-            <div class="report-header">Reporte Diario de Ventas</div>
-            <div>Fecha: ${reportData.date}</div>
-            ${reportData.sections.map(section => `
-                <div class="report-section">
-                    Sede: ${section.sede}
-                    Total Entradas: ${section.total_tickets}
-                    Total Ingresos: S./${section.total_income.toFixed(2)}
-                </div>
+            <h2>Reporte Diario</h2>
+            <p><strong>Fecha:</strong> ${report.date}</p>
+            ${report.sections.map(section => `
+                <h3>Sede: ${section.sede}</h3>
+                <p>Total Entradas: ${section.total_tickets}</p>
+                <p>Ingresos Totales: S/.${section.total_income.toFixed(2)}</p>
             `).join('')}
         </body>
         </html>
-    `);
-    receiptWindow.document.close();
-    receiptWindow.print();
-    receiptWindow.onfocus = function () { setTimeout(function () { receiptWindow.close(); }, 1000); }
+    `;
+
+    receiptWindow.document.write(content);
+    receiptWindow.document.close(); // Finish writing to the new window
+    receiptWindow.focus(); // Focus on the new window to bring it to the front
+    receiptWindow.print(); // Open the print dialog
+    receiptWindow.onfocus = function() {
+        setTimeout(function() {
+            receiptWindow.close();
+        }, 1000);
+    };
 }
+
+
+
 
 
 
