@@ -36,4 +36,21 @@ router.get('/ventas', (req, res) => {
     }
 });
 
+router.get('/printResponse', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    const response = {
+        entries: [
+            { text: "Comprobante de Venta", bold: true, align: "center", format: "double-height" },
+            { text: "Fecha: " + new Date().toLocaleDateString('es-ES'), bold: false, align: "center", format: "normal" },
+            { text: "Cantidad de Entradas: 3", bold: false, align: "left", format: "normal" },
+            { text: "Costo Total: S./" + (5 * 3).toFixed(2), bold: false, align: "left", format: "normal" },
+            { text: "Código: ABC123", bold: true, align: "center", format: "double-width" }
+        ]
+    };
+    res.json(response);
+});
+
+
+
+
 module.exports = router;

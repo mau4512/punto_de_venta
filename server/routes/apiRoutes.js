@@ -52,6 +52,33 @@ router.post('/setSede', (req, res) => {
 });
 
 
+router.get('/nextSaleCode', (req, res) => {
+    const { sede, date } = req.query;
+    // Extrae solo el mes y el día de la fecha
+    const dayMonth = date.slice(8, 10) + date.slice(5, 7); // YYYY-MM-DD -> DDMM
+
+    connection.query(
+        'SELECT codigo_unico FROM ventas WHERE sede = ? AND DATE(fecha) = ? ORDER BY id DESC LIMIT 1',
+        [sede, date],
+        (err, results) => {
+            if (err) {
+                console.error('Error en la base de datos al recuperar el último código:', err);
+                return res.status(500).json({ message: 'Error al consultar el último código.', error: err.message });
+            }
+
+            let newCode = 1;
+            if (results.length > 0) {
+                const lastCode = results[0].codigo_unico;
+                const lastNumber = parseInt(lastCode.split('-')[1]);
+                newCode = lastNumber + 1;
+            }
+            const uniqueCode = `${sede}${dayMonth}-${newCode.toString().padStart(2, '0')}`;
+            res.json({ nextCode: uniqueCode });
+        }
+    );
+});
+
+
 function generateNewCodeForSale(sede, date, lastCode) {
     const newCodeNumber = lastCode ? parseInt(lastCode.split('-')[1]) + 1 : 1;
     const formattedCodeNumber = newCodeNumber.toString().padStart(2, '0');
@@ -60,12 +87,16 @@ function generateNewCodeForSale(sede, date, lastCode) {
 
 // Ruta para registrar ventas
 router.post('/registerSale', (req, res) => {
-    console.log('Sede recibida en el backend:', req.body.sede);
-    const { quantity, total, sede, date } = req.body; // Asegúrate de recibir 'sede'
+    const { quantity, total, sede, date } = req.body;
     if (!sede) {
         return res.status(400).json({ message: 'La sede no fue proporcionada.' });
     }
-    // Generación y registro de la venta con la sede
+
+    // Extraer el mes y el día de la fecha proporcionada
+    const month = date.slice(5, 7); // YYYY-MM-DD -> MM
+    const day = date.slice(8, 10);  // YYYY-MM-DD -> DD
+    const formattedDate = `${day}${month}`; // Formato DDMM
+
     connection.query(
         'SELECT codigo_unico FROM ventas WHERE sede = ? AND DATE(fecha) = ? ORDER BY id DESC LIMIT 1',
         [sede, date],
@@ -74,12 +105,13 @@ router.post('/registerSale', (req, res) => {
                 return res.status(500).json({ message: 'Error al consultar el último código.', error: err.message });
             }
 
-            let lastCode = 0;
+            let lastCodeNumber = 0;
             if (results.length > 0) {
-                lastCode = parseInt(results[0].codigo_unico.split('-')[1]);
+                const lastCode = results[0].codigo_unico;
+                lastCodeNumber = parseInt(lastCode.split('-')[1]);
             }
-            const newCode = lastCode + 1;
-            const uniqueCode = `${sede}${date.replace(/-/g, '').slice(4)}-${newCode.toString().padStart(2, '0')}`;
+            const newCodeNumber = lastCodeNumber + 1;
+            const uniqueCode = `${sede}${formattedDate}-${newCodeNumber.toString().padStart(2, '0')}`;
 
             connection.query(
                 'INSERT INTO ventas (fecha, cantidad, total, codigo_unico, sede) VALUES (?, ?, ?, ?, ?)',
@@ -94,6 +126,7 @@ router.post('/registerSale', (req, res) => {
         }
     );
 });
+
 
 //generar el reporte diario de ventas
 router.get('/generateDailyReport', (req, res) => {
@@ -119,10 +152,31 @@ router.get('/generateDailyReport', (req, res) => {
 });
 
 
+router.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.log('Error al cerrar sesión:', err);
+            res.status(500).send('Error al cerrar sesión');
+        } else {
+            res.send({ success: true, message: 'Sesión cerrada correctamente' });
+        }
+    });
+});
 
 
-
-
+// Ruta para obtener la respuesta de impresión
+router.get('/printResponse', (req, res) => {
+    const response = {
+        items: [
+            { type: 'text', content: 'My Title', bold: 1, align: 2, format: 3 },
+            { type: 'image', path: 'http://example.com/image.jpg', align: 2 },
+            { type: 'barcode', value: '1234567890123', width: 100, height: 50, align: 0 },
+            { type: 'QR', value: 'Sample QR text', size: 40, align: 2 },
+            { type: 'text', content: 'This text has<br>two lines', bold: 0, align: 0 }
+        ]
+    };
+    res.json(response);
+});
 
 
 
