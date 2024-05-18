@@ -6,23 +6,26 @@
     <title>Punto de Venta - Liga de Baloncesto</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.3/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Compra de Entradas</h1>
         <img src="img/interclubes.png" alt="Descripción de la imagen" style="display: block; margin: 10px auto 20px;">
+        <img id="testImage" src="img/simbolo.png" alt="Test Image" style="display:none;">
 
         <form id="ticketForm">
             <label for="ticketCount">Número de Entradas:</label>
             <input type="number" id="ticketCount" name="ticketCount" min="1" value="1">
             
             <label for="totalCost">Costo Total:</label>
-            <input type="text" id="totalCost" name="totalCost" readonly>
-            
+            <input type="text" id="totalCost" name="totalCost" readonly> <!-- Aquí mantienes el valor numérico -->
+            <span id="totalCostDisplay">S./0.00</span> <!-- Este span mostrará el valor con formato -->
+
             <button type="button" onclick="processSale()">Procesar</button>
-
             <button type="button" onclick="generateDailyReport()">Generar Reporte Diario</button>
-
+            <button onclick="logout()">Cerrar Sesión</button>
         </form>
 
         <div id="receipt" style="display:none; margin-top: 20px;">
@@ -31,12 +34,12 @@
             <p id="quantity"></p>
             <p id="total"></p>
             <p id="code"></p>
-            <button type="button" onclick="confirmSale()">Confirmar Venta</button> <!-- Botón Confirmar Venta -->
-            <button type="button" onclick="window.printReceipt()">Imprimir</button>
+            <button type="button" onclick="confirmSale()">Confirmar Venta</button>
             <button type="button" onclick="cancelReceipt()">Cancelar</button>
         </div>
     </div>
 </body>
 </html>
+
 
 
