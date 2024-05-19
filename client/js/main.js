@@ -1,4 +1,5 @@
 function processSale() {
+    console.log('Procesando venta...');
     calculateTotal();
     generateReceipt();
 }
@@ -39,13 +40,13 @@ function generateReceipt() {
                 receiptElement.style.display = 'block';
                 receiptElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
-                console.error('No se recibió un código válido:', data);
-                alert('No se pudo obtener un código válido para la previsualización del recibo.');
+                console.error('No se recibió un código válido:', data.message);
+                alert('No se pudo obtener un código válido para la previsualización del recibo: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error al obtener el próximo código:', error);
-            alert('Error al generar la previsualización del recibo');
+            alert('Error al generar la previsualización del recibo: ' + error.message);
         });
 }
 
@@ -130,21 +131,6 @@ function printReceipt() {
     // Guardar el PDF
     doc.save('receipt.pdf');
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function generateDailyReport() {

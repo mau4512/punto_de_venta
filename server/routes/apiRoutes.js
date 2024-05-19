@@ -54,6 +54,17 @@ router.post('/setSede', (req, res) => {
 
 router.get('/nextSaleCode', (req, res) => {
     const { sede, date } = req.query;
+
+    // Validación básica de los parámetros
+    if (!sede || !date) {
+        return res.status(400).json({ message: 'Faltan parámetros requeridos: sede o fecha.' });
+    }
+
+    // Asegurarse de que la fecha tiene el formato correcto
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return res.status(400).json({ message: 'Formato de fecha inválido. Usa YYYY-MM-DD.' });
+    }
+
     // Extrae solo el mes y el día de la fecha
     const dayMonth = date.slice(8, 10) + date.slice(5, 7); // YYYY-MM-DD -> DDMM
 
@@ -69,10 +80,10 @@ router.get('/nextSaleCode', (req, res) => {
             let newCode = 1;
             if (results.length > 0) {
                 const lastCode = results[0].codigo_unico;
-                const lastNumber = parseInt(lastCode.split('-')[1]);
-                newCode = lastNumber + 1;
+                const lastNumber = parseInt(lastCode.split('-')[1], 10);
+                newCode = lastNumber + 1; // Incrementa el último número de código
             }
-            const uniqueCode = `${sede}${dayMonth}-${newCode.toString().padStart(2, '0')}`;
+            const uniqueCode = `${sede}${dayMonth}-${newCode.toString().padStart(2, '0')}`; // Formatea el nuevo código
             res.json({ nextCode: uniqueCode });
         }
     );
